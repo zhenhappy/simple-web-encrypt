@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>网页加密Demo</title>
+  <script>
+    var style = document.createElement('style')
+    style.innerHTML = 'body{display:none}'
+    document.head.appendChild(style)
+    document.addEventListener('DOMContentLoaded', function () {
+      var Cookie = {
+        get: function (key) {
+          var arr = document.cookie.match(new RegExp('(^| )' + key + '=([^;]*)(;|$)'))
+          if (arr != null) return decodeURIComponent(arr[2])
+          return ''
+        },
+        set: function (key, value, duration) {
+          Cookie.del(key)
+          var d = new Date()
+          if (duration <= 0) duration = 1
+          d.setTime(d.getTime() + 1000 * 60 * 60 * 24 * duration)
+          document.cookie = key + '=' + encodeURI(value) + '; expires=' + d.toGMTString() + ';path=/'
+        },
+        del: function (key) {
+          var d = new Date()
+          if (Cookie.get(key) != '') {
+            d.setTime(d.getTime() - (86400 * 1000 * 1))
+            document.cookie = key + '=;expires=' + d.toGMTString()
+          }
+        }
+      }
+      if (new Date().getTime() / 1000 > atob(Cookie.get('_d'))) {
+        var div = document.createElement('div')
+        div.setAttribute('id', 'zmirror-form')
+        div.innerHTML = '<label for="password">请输入密码: </label><input id="password" name="password" type="password"><input id="submit" name="submit" type="submit">'
+        document.documentElement.appendChild(div)
+        document.getElementById('submit').addEventListener('click', function () {
+          if (new Date().getTime() / 1000 < atob(document.getElementById('password').value)) {
+            Cookie.set('_d', document.getElementById('password').value, 999)
+            document.body.style.display = 'block'
+            document.documentElement.removeChild(div)
+          }
+        })
+      } else document.body.style.display = 'block'
+    })
+  </script>
+</head>
+<body>
+  <h1>Hello World</h1>
+</body>
+</html>
